@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-type RegisterFunc func(context.Context, *runtime.ServeMux, string, []grpc.DialOption)
+type RegisterFunc func(context.Context, *runtime.ServeMux, string, []grpc.DialOption) error
 
 func defaultDialOption() []grpc.DialOption {
 	return []grpc.DialOption{}
@@ -23,25 +23,46 @@ func NewGrpcGateway(
 	s := runtime.NewServeMux()
 	httpPort := env.EnvString("HTTP_PORT", "8080")
 	opts := defaultDialOption()
-	for _, f := range register {
-		f(ctx, s, httpPort, opts)
-	}
 
-	var addr strings.Builder
-	addr.WriteString(":")
-	addr.WriteString(httpPort)
+	var addrBuilder strings.Builder
+	addrBuilder.WriteString(":")
+	addrBuilder.WriteString(httpPort)
+
+	addr := addrBuilder.String()
+	for _, f := range register {
+		if err := f(ctx, s, addr, opts); err != nil {
+			panic(err)
+		}
+	}
 	return &GrpcGateway{
-		server: &http.Server{
-			Addr:    addr.String(),
-			Handler: s,
-		},
+		addr: addr,
+		mux:  s,
+		opts: opts,
 	}
 }
 
 type GrpcGateway struct {
-	server *http.Server
+	addr string
+	opts []grpc.DialOption
+	mux  *runtime.ServeMux
 }
 
 func (s *GrpcGateway) Start(ctx context.Context) error {
-	return s.server.ListenAndServe()
+	server := &http.Server{
+		Addr:    s.addr,
+		Handler: s.mux,
+	}
+	return server.ListenAndServe()
+}
+
+func (s *GrpcGateway) Register(
+	ctx context.Context,
+	register ...RegisterFunc,
+) error {
+	for _, f := range register {
+		if err := f(ctx, s.mux, s.addr, s.opts); err != nil {
+			return err
+		}
+	}
+	return nil
 }
