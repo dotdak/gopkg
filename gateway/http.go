@@ -6,12 +6,16 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/encoding/gzip"
 )
 
 type RegisterFunc func(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error
 
 func defaultDialOption() []grpc.DialOption {
-	return []grpc.DialOption{}
+	return []grpc.DialOption{
+		grpc.WithInsecure(),
+		grpc.WithDefaultCallOptions(grpc.UseCompressor(gzip.Name)),
+	}
 }
 
 func NewGrpcGateway(
@@ -65,4 +69,10 @@ func (s *GrpcGateway) Register(
 		}
 	}
 	return nil
+}
+
+func WithOption(newOpts []grpc.DialOption, f RegisterFunc) RegisterFunc {
+	return func(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
+		return f(ctx, mux, endpoint, newOpts)
+	}
 }
