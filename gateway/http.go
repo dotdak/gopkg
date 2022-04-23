@@ -16,28 +16,30 @@ func defaultDialOption() []grpc.DialOption {
 
 func NewGrpcGateway(
 	ctx context.Context,
-	addr string,
+	httpAddr, grpcAddr string,
 	register ...RegisterFunc,
 ) *GrpcGateway {
 	s := runtime.NewServeMux()
 	opts := defaultDialOption()
 
 	for _, f := range register {
-		if err := f(ctx, s, addr, opts); err != nil {
+		if err := f(ctx, s, grpcAddr, opts); err != nil {
 			panic(err)
 		}
 	}
 	return &GrpcGateway{
-		addr: addr,
-		mux:  s,
-		opts: opts,
+		addr:     httpAddr,
+		grpcAddr: grpcAddr,
+		mux:      s,
+		opts:     opts,
 	}
 }
 
 type GrpcGateway struct {
-	addr string
-	opts []grpc.DialOption
-	mux  *runtime.ServeMux
+	addr     string
+	grpcAddr string
+	opts     []grpc.DialOption
+	mux      *runtime.ServeMux
 }
 
 func (s *GrpcGateway) Start(ctx context.Context) error {
@@ -58,9 +60,4 @@ func (s *GrpcGateway) Register(
 		}
 	}
 	return nil
-}
-
-func With()
-func (s *GrpcGateway) Stop(ctx context.Context) {
-
 }
