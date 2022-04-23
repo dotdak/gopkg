@@ -1,4 +1,4 @@
-package common
+package genid
 
 import "crypto/rand"
 
