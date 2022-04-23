@@ -36,6 +36,7 @@ func NewGrpcGateway(
 }
 
 type GrpcGateway struct {
+	*http.Server
 	addr     string
 	grpcAddr string
 	opts     []grpc.DialOption
@@ -43,11 +44,15 @@ type GrpcGateway struct {
 }
 
 func (s *GrpcGateway) Start(ctx context.Context) error {
-	server := &http.Server{
+	s.Server = &http.Server{
 		Addr:    s.addr,
 		Handler: s.mux,
 	}
-	return server.ListenAndServe()
+	return s.ListenAndServe()
+}
+
+func (s *GrpcGateway) Stop(ctx context.Context) {
+	s.Shutdown(ctx)
 }
 
 func (s *GrpcGateway) Register(
