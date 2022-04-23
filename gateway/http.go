@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/dotdak/gopkg/env"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 )
 
