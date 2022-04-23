@@ -10,12 +10,12 @@ import (
 )
 
 func NewMetricServer(
-	ctx context.Context,
+	metricPort string,
 ) *MetricServer {
-	metricPort := env.EnvString("METRIC_PORT", ":7070")
-	logger.LOG().Info("metric server", "address", metricPort)
+	port := env.EnvString("METRIC_PORT", metricPort)
+	logger.LOG().Info("metric server", "address", port)
 	return &MetricServer{
-		Server: &http.Server{Addr: metricPort, Handler: nil},
+		Server: &http.Server{Addr: port, Handler: nil},
 	}
 }
 
