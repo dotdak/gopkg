@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-type RegisterFunc func(context.Context, *runtime.ServeMux, string, []grpc.DialOption) error
+type RegisterFunc func(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error
 
 func defaultDialOption() []grpc.DialOption {
 	return []grpc.DialOption{}
