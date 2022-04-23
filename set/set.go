@@ -16,6 +16,12 @@ func NewSet[K comparable](keys ...K) *HashSet[K, struct{}] {
 	return set
 }
 
+func Adds[K comparable](s *HashSet[K, struct{}], keys ...K) {
+	for _, k := range keys {
+		s.Add(k, struct{}{})
+	}
+}
+
 func (s *HashSet[K, V]) Add(k K, v V) {
 	s.Data[k] = v
 }

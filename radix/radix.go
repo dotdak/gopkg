@@ -146,8 +146,8 @@ func (t *Tree) Insert(s string, v []string) ([]string, bool) {
 		// Handle key exhaution
 		if len(search) == 0 {
 			if n.isLeaf() {
-				valSet := set.NewString(n.leaf.val...)
-				valSet.Adds(v...)
+				valSet := set.NewSet(n.leaf.val...)
+				set.Adds(valSet, v...)
 				n.leaf.val = valSet.Keys()
 				return n.leaf.val, true
 			}
@@ -319,7 +319,7 @@ func (t *Tree) DeleteKey(s string, keys []string) ([]string, bool) {
 DELETE:
 	// Delete keys in the leaf or detele leaf if no key presents
 	leaf := n.leaf
-	set := set.NewString(leaf.val...)
+	set := set.NewSet(leaf.val...)
 	for _, v := range keys {
 		set.Pop(v)
 	}

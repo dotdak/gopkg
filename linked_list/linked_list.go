@@ -18,8 +18,8 @@ type Node interface {
 }
 
 type NodeImpl struct {
-	val  int
 	next Node
+	val  int
 }
 
 func (n *NodeImpl) Val() int {
