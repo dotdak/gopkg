@@ -3,9 +3,7 @@ package gateway
 import (
 	"context"
 	"net/http"
-	"strings"
 
-	"github.com/dotdak/gopkg/env"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 )
@@ -18,17 +16,12 @@ func defaultDialOption() []grpc.DialOption {
 
 func NewGrpcGateway(
 	ctx context.Context,
+	addr string,
 	register ...RegisterFunc,
 ) *GrpcGateway {
 	s := runtime.NewServeMux()
-	httpPort := env.EnvString("HTTP_PORT", "8080")
 	opts := defaultDialOption()
 
-	var addrBuilder strings.Builder
-	addrBuilder.WriteString(":")
-	addrBuilder.WriteString(httpPort)
-
-	addr := addrBuilder.String()
 	for _, f := range register {
 		if err := f(ctx, s, addr, opts); err != nil {
 			panic(err)
@@ -65,4 +58,9 @@ func (s *GrpcGateway) Register(
 		}
 	}
 	return nil
+}
+
+func With()
+func (s *GrpcGateway) Stop(ctx context.Context) {
+
 }
