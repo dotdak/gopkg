@@ -7,6 +7,7 @@ require (
 	github.com/go-logr/zapr v1.2.3
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
+	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
 	github.com/json-iterator/go v1.1.12
 	github.com/prometheus/client_golang v1.12.1
