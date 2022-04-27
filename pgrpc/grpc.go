@@ -3,6 +3,7 @@ package pgrpc
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"runtime/debug"
 	"strings"
 	"time"
@@ -93,6 +94,10 @@ func GrpcServerOption() []grpc.ServerOption {
 			grpc_recovery.StreamServerInterceptor(grpc_recovery.WithRecoveryHandler(TraceLog)),
 		),
 	}
+}
+
+func CustomHTTPErrorHandler(ctx context.Context, mux *runtime.ServeMux, marshaler runtime.Marshaler, w http.ResponseWriter, r *http.Request, err error) {
+	runtime.DefaultHTTPErrorHandler(ctx, mux, marshaler, w, r, perror.ConvertGrpcErrors(err))
 }
 
 func GrpcServerOptionWithAuth() []grpc.ServerOption {

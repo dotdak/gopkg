@@ -1,6 +1,11 @@
 package perror
 
-import "errors"
+import (
+	"errors"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+)
 
 var (
 	ErrorNotFound   = errors.New("not found")
@@ -18,4 +23,17 @@ func IfErr(errs ...error) error {
 	}
 
 	return nil
+}
+
+func ConvertGrpcErrors(err error) error {
+	if errors.Is(err, ErrorInvalidReq) {
+		stt := status.New(codes.InvalidArgument, err.Error())
+		return stt.Err()
+	}
+	if errors.Is(err, ErrorNotFound) || errors.Is(err, ErrorNotImpl) {
+		stt := status.New(codes.NotFound, err.Error())
+		return stt.Err()
+	}
+
+	return err
 }
