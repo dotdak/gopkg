@@ -1,100 +1,99 @@
 package linkedlist
 
-import (
-	"fmt"
-)
-
-func NewNode(val int) Node {
-	return &NodeImpl{
-		val:  val,
-		next: nil,
+func NewLinkedList[V comparable]() *LinkedList[V] {
+	var v V
+	l := &LinkedList[V]{
+		head: NewNode(v, nil, nil),
+		tail: NewNode(v, nil, nil),
 	}
+	l.head.next = l.tail
+	l.tail.prev = l.head
+	return l
 }
 
-type Node interface {
-	Val() int
-	Next() Node
-	SetNext(n Node)
+type LinkedList[V comparable] struct {
+	head *Node[V]
+	tail *Node[V]
+	size int
 }
 
-type NodeImpl struct {
-	next Node
-	val  int
+func (l *LinkedList[V]) Head() *Node[V] {
+	return l.head.next
 }
 
-func (n *NodeImpl) Val() int {
-	return n.val
+func (l *LinkedList[V]) Tail() *Node[V] {
+	return l.tail.prev
 }
 
-func (n *NodeImpl) Next() Node {
-	return n.next
+func (l *LinkedList[V]) Append(value V) *Node[V] {
+	node := NewNode(value, l.tail.prev, l.tail)
+	l.tail.prev.next = node
+	l.tail.prev = node
+	l.size++
+	return node
 }
 
-func (n *NodeImpl) SetNext(node Node) {
-	n.next = node
+func (l *LinkedList[V]) Prepend(value V) *Node[V] {
+	node := NewNode(value, l.head, l.head.next)
+	l.head.next.prev = node
+	l.head.next = node
+	l.size++
+	return node
 }
 
-func End(head Node) Node {
-	if head == nil {
-		return nil
-	}
-	for head.Next() != nil {
-		head = head.Next()
-	}
-	return head
-}
-
-func Get(head Node, index int) Node {
-	if head == nil {
-		return nil
-	}
-	inx := 0
-	for head != nil {
-		if inx == index {
-			return head
-		}
-		inx += 1
-		head = head.Next()
-	}
-	return nil
-}
-
-func Insert(head Node, index, val int) bool {
-	p := Get(head, index)
-	if p == nil {
+func (l *LinkedList[V]) RemoveNode(node *Node[V]) bool {
+	if node == nil || node == l.head || node == l.tail {
 		return false
 	}
 
-	new := &NodeImpl{
-		val:  val,
-		next: p.Next(),
-	}
-	p.SetNext(new)
+	node.prev.next = node.next
+	node.next.prev = node.prev
+	l.size--
 	return true
 }
 
-func Append(head Node, val ...int) Node {
-	for _, v := range val {
-		if head == nil {
-			head = NewNode(v)
+func (l *LinkedList[V]) IsNil() bool {
+	return l.head.next == l.tail
+}
+
+func (l *LinkedList[V]) Iter() chan *Node[V] {
+	ch := make(chan *Node[V])
+	go func() {
+		defer close(ch)
+		node := l.head
+		for node.next != nil {
+			ch <- node
+			node = node.next
 		}
+	}()
 
-		p := End(head)
-		p.SetNext(NewNode(v))
-	}
-
-	return head
+	return ch
+}
+func (l *LinkedList[V]) Size() int {
+	return l.size
 }
 
-func Print(head Node) {
-	for head != nil {
-		fmt.Print("->", head.Val())
-		head = head.Next()
+func NewNode[V comparable](value V, prev, next *Node[V]) *Node[V] {
+	return &Node[V]{
+		value: value,
+		prev:  prev,
+		next:  next,
 	}
 }
 
-func main() {
-	a := NewNode(19)
-	Append(a, 10, 4, 1, 3, 45, 56)
-	Print(a)
+type Node[V comparable] struct {
+	value V
+	prev  *Node[V]
+	next  *Node[V]
+}
+
+func (n *Node[V]) Value() V {
+	return n.value
+}
+
+func (n *Node[V]) Next() *Node[V] {
+	return n.next
+}
+func (n *Node[V]) Prev() *Node[V] {
+	return n.prev
 }
