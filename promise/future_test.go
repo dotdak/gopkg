@@ -15,8 +15,7 @@ func TestFutureToReturnChannels(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "text/plain")
-		io.WriteString(w, "Hello World")
-
+		_, _ = io.WriteString(w, "Hello World")
 	}))
 	defer ts.Close()
 

@@ -14,6 +14,9 @@ func TestOrderedMap(t *testing.T) {
 	for _, i := range expected {
 		orderedmap.Add(i, 1)
 	}
+
+	art.Equal(expected, orderedmap.Keys())
+
 	for _, i := range expected {
 		k, _ := orderedmap.PopFirst()
 		art.Equal(k, i)

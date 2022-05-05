@@ -60,8 +60,8 @@ func (l *LinkedList[V]) Iter() chan *Node[V] {
 	ch := make(chan *Node[V])
 	go func() {
 		defer close(ch)
-		node := l.head
-		for node.next != nil {
+		node := l.head.next
+		for node != l.tail {
 			ch <- node
 			node = node.next
 		}

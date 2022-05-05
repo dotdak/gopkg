@@ -55,8 +55,8 @@ func (s *GrpcGateway) Start(ctx context.Context) error {
 	return s.ListenAndServe()
 }
 
-func (s *GrpcGateway) Stop(ctx context.Context) {
-	s.Shutdown(ctx)
+func (s *GrpcGateway) Stop(ctx context.Context) error {
+	return s.Shutdown(ctx)
 }
 
 func (s *GrpcGateway) Register(

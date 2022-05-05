@@ -11,7 +11,7 @@ type HttpRequest[R, S comparable] func(ctx context.Context, req *R) (S, error)
 
 func BadRequest(w http.ResponseWriter, err error) {
 	w.WriteHeader(http.StatusBadRequest)
-	w.Write([]byte(err.Error()))
+	_, _ = w.Write([]byte(err.Error()))
 }
 
 const CtxHTTPHeader = "http_header"
@@ -43,12 +43,12 @@ func HandlerWrap[R, S comparable](f HttpRequest[R, S]) http.HandlerFunc {
 		buf, err := json.Marshal(val)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(err.Error()))
+			_, _ = w.Write([]byte(err.Error()))
 			return
 		}
 
 		w.WriteHeader(http.StatusOK)
-		w.Write(buf)
+		_, _ = w.Write(buf)
 		return
 	}
 }

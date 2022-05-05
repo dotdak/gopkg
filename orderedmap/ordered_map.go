@@ -26,7 +26,7 @@ func (m *OrderedMap[K, V]) Add(k K, v V) {
 
 	m.data[k] = &Value[K, V]{
 		value:   v,
-		address: m.list.Prepend(k),
+		address: m.list.Append(k),
 	}
 }
 
@@ -40,7 +40,7 @@ func (m *OrderedMap[K, V]) Pop(k K) (v V) {
 	return
 }
 
-func (m *OrderedMap[K, V]) PopLast() (k K, v V) {
+func (m *OrderedMap[K, V]) PopFirst() (k K, v V) {
 	if m.IsEmpty() {
 		return
 	}
@@ -51,7 +51,7 @@ func (m *OrderedMap[K, V]) PopLast() (k K, v V) {
 	return head.Value(), value.value
 }
 
-func (m *OrderedMap[K, V]) PopFirst() (k K, v V) {
+func (m *OrderedMap[K, V]) PopLast() (k K, v V) {
 	if m.IsEmpty() {
 		return
 	}
