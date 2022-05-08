@@ -25,9 +25,9 @@ type MetricServer struct {
 
 func (s *MetricServer) Start() error {
 	s.Server.Handler = promhttp.Handler()
-	return s.ListenAndServe()
+	return s.Server.ListenAndServe()
 }
 
 func (s *MetricServer) Stop() error {
-	return s.Shutdown(context.Background())
+	return s.Server.Shutdown(context.Background())
 }
