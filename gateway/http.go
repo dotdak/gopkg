@@ -52,11 +52,11 @@ func (s *GrpcGateway) Start(ctx context.Context) error {
 		Addr:    s.addr,
 		Handler: s.mux,
 	}
-	return s.ListenAndServe()
+	return s.Server.ListenAndServe()
 }
 
 func (s *GrpcGateway) Stop(ctx context.Context) error {
-	return s.Shutdown(ctx)
+	return s.Server.Shutdown(ctx)
 }
 
 func (s *GrpcGateway) Register(

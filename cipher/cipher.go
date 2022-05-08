@@ -19,6 +19,7 @@ func Encrypt(key, data []byte) ([]byte, error) {
 	if _, err = rand.Read(nonce); err != nil {
 		return nil, err
 	}
+
 	ciphertext := gcm.Seal(nonce, nonce, data, nil)
 	return ciphertext, nil
 }

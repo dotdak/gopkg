@@ -3,10 +3,12 @@ package genid
 import "crypto/rand"
 
 func NewID() string {
-	const (
-		alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz" // base58
-		size     = 16
-	)
+	const size = 16
+	return NewIDWithSize(size)
+}
+
+func NewIDWithSize(size int) string {
+	const alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz" // base58
 
 	var id = make([]byte, size)
 	if _, err := rand.Read(id); err != nil {
