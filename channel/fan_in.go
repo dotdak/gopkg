@@ -24,3 +24,26 @@ func FanInOrder[V any](in ...chan V) chan V {
 
 	return out
 }
+
+func FanInOrderClassic[V any](in ...[]V) []V {
+	if len(in) == 0 {
+		return []V{}
+	}
+	out := make([]V, 0, len(in))
+	maxLen := len(in[0])
+	for _, i := range in {
+		if a := len(i); a >= maxLen {
+			maxLen = a
+		}
+	}
+	for i := 0; i < maxLen; i++ {
+		for _, arr := range in {
+			if i >= len(arr) {
+				continue
+			}
+
+			out = append(out, arr[i])
+		}
+	}
+	return out
+}
