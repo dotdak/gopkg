@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/dotdak/gopkg/pgrpc"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/encoding/gzip"
@@ -23,7 +24,18 @@ func NewGrpcGateway(
 	httpAddr, grpcAddr string,
 	register ...RegisterFunc,
 ) *GrpcGateway {
-	mux := runtime.NewServeMux()
+	return NewGrpcGatewayWithOpts(ctx, httpAddr, grpcAddr, register, []runtime.ServeMuxOption{
+		runtime.WithErrorHandler(pgrpc.CustomHTTPErrorHandler),
+	})
+}
+
+func NewGrpcGatewayWithOpts(
+	ctx context.Context,
+	httpAddr, grpcAddr string,
+	register []RegisterFunc,
+	muxOpts []runtime.ServeMuxOption,
+) *GrpcGateway {
+	mux := runtime.NewServeMux(muxOpts...)
 	opts := defaultDialOption()
 
 	for _, f := range register {
