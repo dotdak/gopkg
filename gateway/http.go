@@ -23,19 +23,23 @@ func NewGrpcGateway(
 	httpAddr, grpcAddr string,
 	register ...RegisterFunc,
 ) *GrpcGateway {
-	s := runtime.NewServeMux()
+	mux := runtime.NewServeMux()
 	opts := defaultDialOption()
 
 	for _, f := range register {
-		if err := f(ctx, s, grpcAddr, opts); err != nil {
+		if err := f(ctx, mux, grpcAddr, opts); err != nil {
 			panic(err)
 		}
 	}
 
 	return &GrpcGateway{
+		Server: &http.Server{
+			Addr:    httpAddr,
+			Handler: mux,
+		},
 		addr:     httpAddr,
 		grpcAddr: grpcAddr,
-		mux:      s,
+		mux:      mux,
 		opts:     opts,
 	}
 }
@@ -49,10 +53,6 @@ type GrpcGateway struct {
 }
 
 func (s *GrpcGateway) Start(ctx context.Context) error {
-	s.Server = &http.Server{
-		Addr:    s.addr,
-		Handler: s.mux,
-	}
 	return s.Server.ListenAndServe()
 }
 
@@ -72,7 +72,7 @@ func (s *GrpcGateway) Register(
 	return nil
 }
 
-func (s *GrpcGateway) Mux() *runtime.ServeMux {
+func (s *GrpcGateway) GetMux() *runtime.ServeMux {
 	return s.mux
 }
 
