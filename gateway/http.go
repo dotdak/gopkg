@@ -31,6 +31,7 @@ func NewGrpcGateway(
 			panic(err)
 		}
 	}
+
 	return &GrpcGateway{
 		addr:     httpAddr,
 		grpcAddr: grpcAddr,
@@ -69,6 +70,16 @@ func (s *GrpcGateway) Register(
 		}
 	}
 	return nil
+}
+
+func (s *GrpcGateway) Mux() *runtime.ServeMux {
+	return s.mux
+}
+
+func WrapperHandler(h http.HandlerFunc) runtime.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
+		h(w, r)
+	}
 }
 
 func WithOption(newOpts []grpc.DialOption, f RegisterFunc) RegisterFunc {
