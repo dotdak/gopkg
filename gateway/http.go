@@ -88,9 +88,9 @@ func (s *GrpcGateway) GetMux() *runtime.ServeMux {
 	return s.mux
 }
 
-func WrapperHandler(h http.HandlerFunc) runtime.HandlerFunc {
+func WrapperHandler(h http.Handler) runtime.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
-		h(w, r)
+		h.ServeHTTP(w, r)
 	}
 }
 
