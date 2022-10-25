@@ -4,7 +4,8 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/dotdak/gopkg/pgrpc"
+	"pgrpc"
+
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/encoding/gzip"
